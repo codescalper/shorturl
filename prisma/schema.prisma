@@ -1,0 +1,28 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Url {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  originalUrl String
+  shortUrl    String
+  alias       String        @unique
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  UrlAnalytic UrlAnalytic[]
+}
+
+model UrlAnalytic {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  url     Url    @relation(fields: [url_id], references: [id])
+  url_id  String @db.ObjectId
+  clicked Int
+}
