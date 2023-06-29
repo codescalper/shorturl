@@ -23,6 +23,6 @@ model Url {
 model UrlAnalytic {
   id      String @id @default(auto()) @map("_id") @db.ObjectId
   url     Url    @relation(fields: [url_id], references: [id])
-  url_id  String @db.ObjectId
+  url_id  String @unique  @db.ObjectId
   clicked Int
 }

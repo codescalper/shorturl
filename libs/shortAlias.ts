@@ -2,7 +2,7 @@
 
 export default (host: string) => {
 
-  const alias = "helloworld";
+  const alias = "mayankonweb";
   return {
     alias,
     shortUrl: `http://${host}/${alias}`,
