@@ -1,51 +1,65 @@
+// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import { isWebUri } from "valid-url";
-import { prisma, shortAlias } from "@/libs/index";
+import { prisma, generateShortLink } from "@/libs/index"; //q: how to  fix this?
+
 
 type RequestData = {
   url: string;
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const { method } = req;
+
   if (method !== "POST") {
     return res.status(400).json({
-      message: "Only POST requests are allowed",
+      message: "Only POST request are allowed!",
     });
-  } 
+  }
 
   const { url }: RequestData = JSON.parse(req.body);
-  const host = req.headers.host || ""; // Ensure host has a value
+  const host = req.headers.host;
+  const { shortCode, shortUrl } = generateShortLink(host!);
 
-  const { alias, shortUrl } = shortAlias(host, "your-alias-value");
-
-  // Checking if original URL is valid or not
+  // # checking if original url is valid
   if (!isWebUri(url)) {
     return res.status(400).json({
       statusCode: 400,
       error: {
-        message: "Invalid URL",
+        message: "Invalid Url",
       },
       data: null,
     });
   }
+
+  /**
+   * if there is an original url -> we going to query that url
+   * else we going to create a new short url
+   */
+
   const result = await prisma.$transaction(async (tx) => {
-    // This is the query if there is any existing original URL
+    // # query if there is an existing original url
     const originalUrl = await tx.url.findFirst({
       where: {
         originalUrl: url,
       },
     });
+
     if (originalUrl) return originalUrl;
 
-    //if there isn't we will create a new url
+    // # create a new url
     const newUrl = await tx.url.create({
       data: {
         originalUrl: url,
         shortUrl,
-        alias: alias,
+        alias: shortCode,
       },
     });
+
+    // # create new analytic
     await tx.urlAnalytic.create({
       data: {
         clicked: 0,
@@ -56,15 +70,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         },
       },
     });
+
     return newUrl;
   });
+
   return res.status(200).json({
     statusCode: 200,
     error: null,
     data: {
       originalUrl: result.originalUrl,
       shortUrl: result.shortUrl,
-      alias: result.alias,
+      code: result.alias,
     },
   });
 }

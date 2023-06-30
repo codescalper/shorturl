@@ -1,3 +1,3 @@
-import shortAlias from "./shortAlias";
-export {shortAlias}
+import generateShortLink from "./generateShortLink";
+export { generateShortLink };
 export * from "./prisma";

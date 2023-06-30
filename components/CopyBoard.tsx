@@ -31,8 +31,8 @@ export default function CopyBoard({ code }: CopyBoardProps) {
         <input
           type="text"
           className="border border-solid p-4 rounded-l-lg w-full"
-          value={`${process.env.NEXT_PUBLIC_API_URL}/api/${code}`}
-          ref={inputRef}
+          value={`${process.env.NEXT_PUBLIC_API_URL}/api/${code}`} 
+          ref={inputRef} 
           readOnly
         />
 
