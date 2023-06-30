@@ -1,10 +1,6 @@
-// import { customAlphabet } from "nanoid";
-
-export default (host: string) => {
-
-  const alias = "mayankonweb";
+export default (host: string, alias: string) => {
   return {
     alias,
-    shortUrl: `http://${host}/${alias}`,
+    shortUrl: `http://${host}/api/${alias}`,
   };
 };
