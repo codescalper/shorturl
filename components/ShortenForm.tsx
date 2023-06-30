@@ -4,7 +4,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
 async function createUrl(url: string) {
-  const res = await fetch("http://localhost:3000/api/generate", {
+  const res = await fetch("https://shortyoururl.vercel.app/api/generate", {
     method: "POST",
     body: JSON.stringify({ url }),
   });
